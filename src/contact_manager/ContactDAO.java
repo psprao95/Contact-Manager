@@ -12,10 +12,8 @@ import contact_manager.ContactForm;
 
 public class ContactDAO {
 	
-	private int precords;
 	private int crecords;
-	private int arecords;
-	private int bdrecords;
+	private int check;
 	private String f,m,l,hstreet,hcity,hstate,hzip,wstreet,wcity,wstate,wzip,carea,cphone,harea,hphone,warea,wphone,dformat,date;
 
 	private Connection myConn;
@@ -43,16 +41,14 @@ public class ContactDAO {
 		try
 		{
 			myStmt=myConn.createStatement();
-			myRs=myStmt.executeQuery("select C.contact_id,C.Fname,C.Mname,C.Lname,\n" +
-					"group_concat(Distinct concat(A.address_type,': ',A.address_street,',',A.city, ',',A.state, ',',A.zipcode,' \\n')) as Address,\n" +
-					"group_concat(Distinct concat(P.phone_type,': ',P.area_code,',',P.pnumber,'\\n'))  as Phone,\n" +
-					"ANY_VALUE(D.date_birth) as Birthday\n" +
-					"from (((contact C  join address A on C.contact_id=A.contac_id) \n" +
-					"join phone P on C.contact_id=P.c_id)\n" +
-					"join Date D on contact_id=con_id)\n" +
-					"\n" +
-					"group by contact_id\n" +
-					"");
+			myRs=myStmt.executeQuery("select C.contact_id,C.Fname,C.Mname,C.Lname,\n" + 
+					"IFNULL(group_concat(Distinct concat(A.address_type,': ',A.address_street,',',A.city, ',',A.state, ',',A.zipcode,' \\n')),\"\") as Address,\n" + 
+					"IFNULL(group_concat(Distinct concat(P.phone_type,': ',P.area_code,',',P.pnumber,'\\n')) ,\"\") as Phone,\n" + 
+					"IFNULL(ANY_VALUE(D.date_birth),\"\") as  Birthday\n" + 
+					"from (((contact C  left join address A on C.contact_id=A.contac_id)\n" + 
+					"left join phone P on C.contact_id=P.c_id)\n" + 
+					"left join Date D on C.contact_id=D.con_id)\n" + 
+					"	group by C.contact_id");
 			while(myRs.next())
 			{
 				ContactForm temp = convertRowtoContact(myRs);
@@ -98,9 +94,9 @@ public class ContactDAO {
 					"group_concat(Distinct concat(A.address_type,': ',A.address_street,',',A.city, ',',A.state, ',',A.zipcode,' \\n')) as Address,\n" +
 					"group_concat(Distinct concat(P.phone_type,': ',P.area_code,'-',P.pnumber,'\\n'))  as Phone,\n" +
 					"ANY_VALUE(D.date_birth) as Birthday\n" +
-					"from (((contact C  join address A on C.contact_id=A.contac_id) \n" +
-					"join phone P on C.contact_id=P.c_id)\n" +
-					"join Date D on contact_id=con_id)\n" +
+					"from (((contact C  left  join address A on C.contact_id=A.contac_id) \n" +
+					"left  join phone P on C.contact_id=P.c_id)\n" +
+					"left  join Date D on C.contact_id=con_id)\n" +
 					"\n" +
 					"where C.Fname like ? or C.Mname like ? or C.Lname like ?\n"
 					+"or A.address_street like ? or A.city like ? or A.state like ? or A.zipcode like ? \n"
@@ -180,7 +176,6 @@ public class ContactDAO {
 		while(res.next())
 		{
 			crecords=res.getInt("total");
-			System.out.println("There are currently " + crecords + " contact records");
 		}
 
 		// Adding a home address, if it exists
@@ -264,7 +259,10 @@ public class ContactDAO {
 	public void modifyContact(ContactForm theContact) throws Exception
 	{
 		PreparedStatement myStmt=null;
+		ResultSet res=null;
 		
+		
+		// Updating contact name
 		myStmt = myConn.prepareStatement("update contact set Fname=?,Mname=?,Lname=? where contact_id=?");
 		myStmt.setString(1, theContact.getFirstName());
 		myStmt.setString(2, theContact.getMiddleName());
@@ -273,51 +271,64 @@ public class ContactDAO {
 		myStmt.executeUpdate();
 		
 		
-		myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type=?");
-		myStmt.setString(1, theContact.getHomeAreaCode());
-		myStmt.setString(2, theContact.getHomePhone());
-		myStmt.setInt(3, theContact.getID());
-		myStmt.setString(4, "home");
-		myStmt.executeUpdate();
+		// Updating home phone
+		if(!theContact.getHomeAreaCode().equals(""))
+		{
+			myStmt=myConn.prepareStatement("select * from phone as check where c_id=? and phone_type='home'");
+			myStmt.setInt(1,theContact.getID());
+			res=myStmt.executeQuery();
+			while(res.next())
+			{
+				check=res.getInt("check");
+			}
+			if(check==1)
+			{
+				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='home'");
+				myStmt.setString(1, theContact.getHomeAreaCode());
+				myStmt.setString(2, theContact.getHomePhone());
+				myStmt.setInt(3, theContact.getID());
+				myStmt.executeUpdate();
+			}
+			else
+			{
+				myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values(?,'home',?,?)");
+				myStmt.setInt(1, theContact.getID());
+				myStmt.setString(2, theContact.getHomeAreaCode());
+				myStmt.setString(3, theContact.getHomePhone());
+				
+				myStmt.executeUpdate();
+			}
+		}
 		
-		myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type=?");
-		myStmt.setString(1, theContact.getWorkAreaCode());
-		myStmt.setString(2, theContact.getWorkPhone());
-		myStmt.setInt(3, theContact.getID());
-		myStmt.setString(4, "work");
-		myStmt.executeUpdate();
 		
-		myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type=?");
-		myStmt.setString(1, theContact.getCellAreaCode());
-		myStmt.setString(2, theContact.getCellPhone());
-		myStmt.setInt(3, theContact.getID());
-		myStmt.setString(4, "cell");
-		myStmt.executeUpdate();
-		
-		myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type=?");
-		myStmt.setString(1, theContact.getHomeStreet());
-		myStmt.setString(2, theContact.getHomeCity());
-		myStmt.setString(3, theContact.getHomeState());
-		myStmt.setString(4, theContact.getHomeZIP());
-		myStmt.setInt(5, theContact.getID());
-		myStmt.setString(6, "home");
-		myStmt.executeUpdate();
-		
-		myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type=?");
-		myStmt.setString(1, theContact.getWorkStreet());
-		myStmt.setString(2, theContact.getWorkCity());
-		myStmt.setString(3, theContact.getWorkState());
-		myStmt.setString(4, theContact.getWorkZIP());
-		myStmt.setInt(5, theContact.getID());
-		myStmt.setString(6, "work");
-		myStmt.executeUpdate();
-		
-		myStmt = myConn.prepareStatement("update date set date_type=?,date_birth=? where con_id=?");
-		myStmt.setString(1, theContact.getFormat());
-		myStmt.setString(2, theContact.getBD());
-		myStmt.setInt(3, theContact.getID());
-		myStmt.executeUpdate();
-		
+		// Updating cell phone
+		if(!theContact.getCellAreaCode().equals(""))
+		{
+			myStmt=myConn.prepareStatement("select * from phone as check where c_id=? and phone_type='cell'");
+			myStmt.setInt(1,theContact.getID());
+			res=myStmt.executeQuery();
+			while(res.next())
+			{
+				check=res.getInt("check");
+			}
+			if(check==1)
+			{
+				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='cell'");
+				myStmt.setString(1, theContact.getCellAreaCode());
+				myStmt.setString(2, theContact.getCellPhone());
+				myStmt.setInt(3, theContact.getID());
+				myStmt.executeUpdate();
+			}
+			else
+			{
+				myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values(?,'cell',?,?)");
+				myStmt.setInt(1, theContact.getID());
+				myStmt.setString(2, theContact.getCellAreaCode());
+				myStmt.setString(3, theContact.getCellPhone());
+				
+				myStmt.executeUpdate();
+			}
+		}
 		
 	}
 	
