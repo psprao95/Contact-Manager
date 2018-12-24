@@ -41,7 +41,8 @@ public class ContactManagerApp extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
+				try 
+				{
 					ContactManagerApp frame = new ContactManagerApp();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -86,13 +87,12 @@ public class ContactManagerApp extends JFrame {
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) 
+			{
 				try
 				{
 				
 				List<ContactForm> contacts=null;
-				
-				
 				String lname = lnametextField.getText();
 				if(lname!=null && lname.trim().length()>0)
 				{

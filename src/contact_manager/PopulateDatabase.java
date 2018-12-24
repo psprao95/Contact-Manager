@@ -146,7 +146,7 @@ public class PopulateDatabase {
 				
 			if(!contact[15].equals(""))
 			{
-				myStmt=myConn.prepareStatement("insert into Date (con_id,date_type,date_birth) values (?,'YYY-MM-DD',?)");	
+				myStmt=myConn.prepareStatement("insert into Date (con_id,date_type,date_birth) values (?,'YYYY-MM-DD',?)");	
 				myStmt.setInt(1, record_id);
 				myStmt.setString(2, contact[15]);
 				

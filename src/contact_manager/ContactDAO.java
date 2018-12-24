@@ -160,14 +160,21 @@ public class ContactDAO {
 	// Method for adding a contact to our contacts database
 	public void addContact(ContactForm theContact) throws Exception
 	{
-
 		PreparedStatement myStmt=null;
 		Statement my=null;
 		ResultSet res=null;
-
-
 		try
 		{
+		
+		
+		// Adding a contact's name to the contact table in our database
+		myStmt=myConn.prepareStatement("insert into contact (Fname,Mname,Lname) values (?,?,?) ");
+		myStmt.setString(1, theContact.getFirstName());
+		myStmt.setString(2, theContact.getMiddleName());
+		myStmt.setString(3, theContact.getLastName());
+		myStmt.executeUpdate();
+		
+		//Getting the contact id of our new contact
 		my = myConn.createStatement();
 		res = my.executeQuery("select max(contact_id) as total from contact");
 		while(res.next())
@@ -176,136 +183,70 @@ public class ContactDAO {
 			System.out.println("There are currently " + crecords + " contact records");
 		}
 
-		myStmt=myConn.prepareStatement("insert into contact (contact_id,Fname,Mname,Lname) values (?,?,?,?) ");
-		myStmt.setInt(1, crecords+1);
-		myStmt.setString(2, theContact.getFirstName());
-		myStmt.setString(3, theContact.getMiddleName());
-		myStmt.setString(4, theContact.getLastName());
-		myStmt.executeUpdate();
-
-
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(address_id) as total from address");
-		while(res.next())
+		// Adding a home address, if it exists
+		if(!theContact.getHomeStreet().equals(""))
 		{
-			arecords=res.getInt("total");
-			System.out.println("There are currently " + arecords + " address records");
-		}
-
+		myStmt = myConn.prepareStatement("insert into address(contac_id,address_type,address_street,city,state,zipcode) values (?,'home',?,?,?,?)");
 		
-		if(theContact.getHomeStreet()!="")
-		{
-		myStmt = myConn.prepareStatement("insert into address(address_id,contac_id,address_type,address_street,city,state,zipcode) values (?,?,?,?,?,?,?)");
-		myStmt.setInt(1, arecords+1);
-		myStmt.setInt(2, crecords+1);
-		myStmt.setString(3, "home");
-		myStmt.setString(4, theContact.getHomeStreet());
-		myStmt.setString(5, theContact.getHomeCity());
-		myStmt.setString(6, theContact.getHomeState());
-		myStmt.setString(7, theContact.getHomeZIP());
+		myStmt.setInt(1, crecords);
+		myStmt.setString(2, theContact.getHomeStreet());
+		myStmt.setString(3, theContact.getHomeCity());
+		myStmt.setString(4, theContact.getHomeState());
+		myStmt.setString(5, theContact.getHomeZIP());
 		myStmt.executeUpdate();
 		}
 		
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(address_id) as total from address");
-		while(res.next())
+		// Adding a work address, if it exists
+		if(!theContact.getWorkStreet().equals(""))
 		{
-			arecords=res.getInt("total");
-			System.out.println("There are currently " + arecords + " address records");
-		}
-		
-		if(theContact.getWorkStreet()!="")
-		{
-		myStmt = myConn.prepareStatement("insert into address(address_id,contac_id,address_type,address_street,city,state,zipcode) values (?,?,?,?,?,?,?)");
-		myStmt.setInt(1, arecords+1);
-		myStmt.setInt(2, crecords+1);
-		myStmt.setString(3, "work");
-		myStmt.setString(4, theContact.getWorkStreet());
-		myStmt.setString(5, theContact.getWorkCity());
-		myStmt.setString(6, theContact.getWorkState());
-		myStmt.setString(7, theContact.getWorkZIP());
+		myStmt = myConn.prepareStatement("insert into address(contac_id,address_type,address_street,city,state,zipcode) values (?,'work',?,?,?,?)");
+		myStmt.setInt(1, crecords);
+		myStmt.setString(2, theContact.getWorkStreet());
+		myStmt.setString(3, theContact.getWorkCity());
+		myStmt.setString(4, theContact.getWorkState());
+		myStmt.setString(5, theContact.getWorkZIP());
 		myStmt.executeUpdate();
 		}
-
-
-
-
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(phone_id) as total from phone");
-		while(res.next())
+		
+		
+		// Adding a cell phone, if it exists
+		if(!theContact.getCellAreaCode().equals(""))
 		{
-			precords=res.getInt("total");
-			System.out.println("There are currently " + precords + " phone records");
-		}
-
-		if(theContact.getCellAreaCode()!="")
-		{
-		myStmt = myConn.prepareStatement("insert into phone(phone_id,c_id,phone_type,area_code,pnumber) values (?,?,?,?,?)");	
-		myStmt.setInt(1, precords+1);
-		myStmt.setInt(2, crecords+1);
-		myStmt.setString(3, "cell");
-		myStmt.setString(4, theContact.getCellAreaCode());
-		myStmt.setString(5, theContact.getCellPhone());
+		myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values (?,'cell',?,?)");	
+		myStmt.setInt(1, crecords);
+		myStmt.setString(2, theContact.getCellAreaCode());
+		myStmt.setString(3, theContact.getCellPhone());
 		myStmt.executeUpdate();
 			}
 		
 		
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(phone_id)  as total from phone");
-		while(res.next())
+		if(!theContact.getHomeAreaCode().equals("")) 
 		{
-			precords=res.getInt("total");
-			System.out.println("There are currently " + precords + " phone records");
-		}
-		
-		if(theContact.getHomeAreaCode()!="") {
-			myStmt = myConn.prepareStatement("insert into phone(phone_id,c_id,phone_type,area_code,pnumber) values (?,?,?,?,?)");
-
-		myStmt.setInt(1, precords+1);
-		myStmt.setInt(2, crecords+1);
-		myStmt.setString(3, "home");
-		myStmt.setString(4, theContact.getHomeAreaCode());
-		myStmt.setString(5, theContact.getHomePhone());
+			myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values (?,'home',?,?)");
+		myStmt.setInt(1, crecords);
+		myStmt.setString(2, theContact.getHomeAreaCode());
+		myStmt.setString(3, theContact.getHomePhone());
 		myStmt.executeUpdate();
 		}
 		
 		
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(phone_id)  as total from phone");
-		while(res.next())
-		{
-			precords=res.getInt("total");
-			System.out.println("There are currently " + precords + " phone records");
-		}
 		
-		if(theContact.getWorkAreaCode()!="") 
+		if(!theContact.getWorkAreaCode().equals("")) 
 		{
-		myStmt = myConn.prepareStatement("insert into phone(phone_id,c_id,phone_type,area_code,pnumber) values (?,?,?,?,?)");
-		myStmt.setInt(1, precords+1);
-		myStmt.setInt(2, crecords+1);
-		myStmt.setString(3, "work");
-		myStmt.setString(4, theContact.getWorkAreaCode());
-		myStmt.setString(5, theContact.getWorkPhone());
+		myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values (?,'work',?,?)");
+		
+		myStmt.setInt(1, crecords);
+		myStmt.setString(2, theContact.getWorkAreaCode());
+		myStmt.setString(3, theContact.getWorkPhone());
 		myStmt.executeUpdate();
 		}
 
-
-
-		my=myConn.createStatement();
-		res=my.executeQuery("select max(date_id) as total from Date");
-		while(res.next())
+		if(!theContact.getFormat().equals(""))
 		{
-			bdrecords=res.getInt("total");
-			System.out.println("There are currently " + bdrecords + " date of birth records");
-		}
-
-		if(theContact.getFormat()!="")
-		{
-			myStmt = myConn.prepareStatement("insert into Date(date_id,con_id,date_type,date_birth) values (?,?,?,?)");
-			myStmt.setInt(1, bdrecords+1);
-			myStmt.setInt(2, crecords+1);
-			myStmt.setString(3, theContact.getFormat());
-			myStmt.setString(4, theContact.getBD());
+			myStmt = myConn.prepareStatement("insert into Date(con_id,date_type,date_birth) values (?,?,?,?)");
+			myStmt.setInt(1, crecords);
+			myStmt.setString(2, theContact.getFormat());
+			myStmt.setString(3, theContact.getBD());
 			myStmt.executeUpdate();
 		}
 
