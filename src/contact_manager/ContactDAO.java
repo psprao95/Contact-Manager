@@ -274,12 +274,12 @@ public class ContactDAO {
 		// Updating home phone
 		if(!theContact.getHomeAreaCode().equals(""))
 		{
-			myStmt=myConn.prepareStatement("select * from phone as check where c_id=? and phone_type='home'");
+			myStmt=myConn.prepareStatement("select count(*) from phone where c_id=? and phone_type='home'");
 			myStmt.setInt(1,theContact.getID());
 			res=myStmt.executeQuery();
 			while(res.next())
 			{
-				check=res.getInt("check");
+				check=res.getInt("count(*)");
 			}
 			if(check==1)
 			{
@@ -304,12 +304,12 @@ public class ContactDAO {
 		// Updating cell phone
 		if(!theContact.getCellAreaCode().equals(""))
 		{
-			myStmt=myConn.prepareStatement("select * from phone as check where c_id=? and phone_type='cell'");
+			myStmt=myConn.prepareStatement("select count(*) from phone  where c_id=? and phone_type='cell'");
 			myStmt.setInt(1,theContact.getID());
 			res=myStmt.executeQuery();
 			while(res.next())
 			{
-				check=res.getInt("check");
+				check=res.getInt("count(*)");
 			}
 			if(check==1)
 			{
@@ -330,6 +330,102 @@ public class ContactDAO {
 			}
 		}
 		
+		
+		if(!theContact.getWorkAreaCode().equals(""))
+		{
+			myStmt=myConn.prepareStatement("select count(*) from phone where c_id=? and phone_type='work'");
+			myStmt.setInt(1,theContact.getID());
+			res=myStmt.executeQuery();
+			while(res.next())
+			{
+				check=res.getInt("count(*)");
+			}
+			if(check==1)
+			{
+				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='work'");
+				myStmt.setString(1, theContact.getWorkAreaCode());
+				myStmt.setString(2, theContact.getWorkPhone());
+				myStmt.setInt(3, theContact.getID());
+				myStmt.executeUpdate();
+			}
+			else
+			{
+				myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values(?,'work',?,?)");
+				myStmt.setInt(1, theContact.getID());
+				myStmt.setString(2, theContact.getWorkAreaCode());
+				myStmt.setString(3, theContact.getWorkPhone());
+				myStmt.executeUpdate();
+			}
+		}
+		
+		
+		
+		// Modifying work address
+		if(!theContact.getWorkStreet().equals(""))
+		{
+			myStmt=myConn.prepareStatement("select count(*) from address where contac_id=? and address_type='work'");
+			myStmt.setInt(1,theContact.getID());
+			res=myStmt.executeQuery();
+			while(res.next())
+			{
+				check=res.getInt("count(*)");
+			}
+			if(check==1)
+			{
+				myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type='work'");
+				myStmt.setString(1, theContact.getWorkStreet());
+				myStmt.setString(2, theContact.getWorkCity());
+				myStmt.setString(3, theContact.getWorkState());
+				myStmt.setString(4, theContact.getWorkZIP());
+				myStmt.setInt(5, theContact.getID());
+				myStmt.executeUpdate();
+			}
+			else
+			{
+				myStmt = myConn.prepareStatement("insert into address(contac_id,address_type,address_street,city,state,zipcode) values(?,'work',?,?,?,?)");
+				myStmt.setInt(1, theContact.getID());
+				myStmt.setString(2, theContact.getWorkStreet());
+				myStmt.setString(3, theContact.getWorkCity());
+				myStmt.setString(4, theContact.getWorkState());
+				myStmt.setString(5, theContact.getWorkZIP());
+				
+				myStmt.executeUpdate();
+			}
+		}
+		
+		
+		// Mpdifying home work address
+		if(!theContact.getHomeStreet().equals(""))
+		{
+			myStmt=myConn.prepareStatement("select count(*) from address where contac_id=? and address_type='home'");
+			myStmt.setInt(1,theContact.getID());
+			res=myStmt.executeQuery();
+			while(res.next())
+			{
+				check=res.getInt("count(*)");
+			}
+			if(check==1)
+			{
+				myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type='home'");
+				myStmt.setString(1, theContact.getHomeStreet());
+				myStmt.setString(2, theContact.getHomeCity());
+				myStmt.setString(3, theContact.getHomeState());
+				myStmt.setString(4, theContact.getHomeZIP());
+				myStmt.setInt(5, theContact.getID());
+				myStmt.executeUpdate();
+			}
+			else
+			{
+				myStmt = myConn.prepareStatement("insert into address(contac_id,address_type,address_street,city,state,zipcode) values(?,'home',?,?,?,?)");
+				myStmt.setInt(1, theContact.getID());
+				myStmt.setString(2, theContact.getHomeStreet());
+				myStmt.setString(3, theContact.getHomeCity());
+				myStmt.setString(4, theContact.getHomeState());
+				myStmt.setString(5, theContact.getHomeZIP());
+				
+				myStmt.executeUpdate();
+			}
+		}
 	}
 	
 	
