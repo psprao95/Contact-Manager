@@ -17,7 +17,7 @@ public class ContactTableModel extends AbstractTableModel  {
 
 
 
-	private String[] columnNames= {"First Name","Middle Name", "Last Name", "Address","Phone","Birthday(YYYY-MM-DD)"};
+	private String[] columnNames= {"First Name","Middle Name", "Last Name", "Address","Phone","Birthday"};
 	private List<ContactForm> contacts;
 
 	public ContactTableModel(List<ContactForm> theContacts)

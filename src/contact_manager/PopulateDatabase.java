@@ -28,6 +28,7 @@ public class PopulateDatabase {
 		PreparedStatement myStmt=null;
 		Statement my=null;
 		
+		
 		String csvFile="contacts.csv";
 		BufferedReader br=null;
 		String line="";
