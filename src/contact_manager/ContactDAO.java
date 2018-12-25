@@ -1,9 +1,5 @@
 package contact_manager;
 
-import java.util.*;
-import java.sql.*;
-import java.io.*;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
