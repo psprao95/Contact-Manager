@@ -509,12 +509,12 @@ public class AddContact extends JDialog {
 				contactDAO.modifyContact(temp);
 				setVisible(false);
 				dispose();
-				
 				contactManagerApp.RefreshEmployeesView();
 				JOptionPane.showMessageDialog(contactManagerApp,"Contact modified succesfully!","Contact Modified",JOptionPane.INFORMATION_MESSAGE);
 			}
 			else
 			{
+				
 			contactDAO.addContact(temp);
 			setVisible(false);
 			dispose();

@@ -4,8 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import contact_manager.ContactForm;
-
 public class ContactDAO {
 	
 	private int crecords;
@@ -134,7 +132,7 @@ public class ContactDAO {
 		}
 
 		if (myStmt != null) {
-
+			myStmt.close();
 		}
 
 		if (myConn != null) {
@@ -194,8 +192,7 @@ public class ContactDAO {
 		}
 		
 		
-		
-		// Adding a work address, if it exists
+		/* Adding a work address, if it exists */
 		if(!theContact.getWorkStreet().equals("") || !theContact.getWorkCity().equals("") || !theContact.getWorkState().equals("") || !theContact.getWorkZIP().equals(""))
 		{
 		myStmt = myConn.prepareStatement("insert into address(contac_id,address_type,address_street,city,state,zipcode) values (?,'work',?,?,?,?)");
@@ -217,6 +214,7 @@ public class ContactDAO {
 		myStmt.setString(2, theContact.getCellAreaCode());
 		myStmt.setString(3, theContact.getCellPhone());
 		myStmt.executeUpdate();
+		close(null,myStmt,null);
 			}
 		
 		
@@ -244,13 +242,14 @@ public class ContactDAO {
 		
 		
 		// Adding the contact's birthday, if it exists
-		if(!theContact.getFormat().equals("") || !theContact.getBD().equals(""))
+		if(!theContact.getBD().equals(""))
 		{
 			myStmt = myConn.prepareStatement("insert into Date(con_id,date_type,date_birth) values (?,?,?)");
 			myStmt.setInt(1, crecords);
 			myStmt.setString(2, theContact.getFormat());
 			myStmt.setString(3, theContact.getBD());
 			myStmt.executeUpdate();
+			close(myStmt,null);
 		}
 
 
@@ -288,6 +287,13 @@ public class ContactDAO {
 			}
 			if(check==1)
 			{
+				if(theContact.getHomePhone().equals("") && theContact.getHomeAreaCode().equals("")  )
+				{
+					
+					myStmt = myConn.prepareStatement("delete from phone  c_id=? and phone_type='home'");
+					myStmt.setInt(1, theContact.getID());
+					myStmt.executeUpdate();
+					}
 				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='home'");
 				myStmt.setString(1, theContact.getHomeAreaCode());
 				myStmt.setString(2, theContact.getHomePhone());
@@ -296,7 +302,7 @@ public class ContactDAO {
 			}
 			else
 			{
-				if(!theContact.getHomeAreaCode().equals("") || !theContact.getHomePhone().equals("")) 
+				if(theContact.getHomeAreaCode().equals("") && theContact.getHomePhone().equals("")) 
 				{
 				myStmt = myConn.prepareStatement("insert into phone(c_id,phone_type,area_code,pnumber) values(?,'home',?,?)");
 				myStmt.setInt(1, theContact.getID());
@@ -318,11 +324,21 @@ public class ContactDAO {
 			}
 			if(check==1)
 			{
+				if(theContact.getCellPhone().equals("") && theContact.getCellAreaCode().equals("")  )
+				{
+					
+					myStmt = myConn.prepareStatement("delete from phone  c_id=? and phone_type='cell'");
+					myStmt.setInt(1, theContact.getID());
+					myStmt.executeUpdate();
+					}
+				else
+				{
 				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='cell'");
 				myStmt.setString(1, theContact.getCellAreaCode());
 				myStmt.setString(2, theContact.getCellPhone());
 				myStmt.setInt(3, theContact.getID());
 				myStmt.executeUpdate();
+				}
 			}
 			else
 			{
@@ -348,12 +364,23 @@ public class ContactDAO {
 				check=res.getInt("count(*)");
 			}
 			if(check==1)
-			{			
+			{	
+				if(theContact.getWorkStreet().equals("") && theContact.getWorkAreaCode().equals("")  )
+				{
+					
+					myStmt = myConn.prepareStatement("delete from phone  c_id=? and phone_type='work'");
+					myStmt.setInt(1, theContact.getID());
+					myStmt.executeUpdate();
+					}
+				else
+				{
 				myStmt = myConn.prepareStatement("update phone set area_code=?,pnumber=? where c_id=? and phone_type='work'");
 				myStmt.setString(1, theContact.getWorkAreaCode());
 				myStmt.setString(2, theContact.getWorkPhone());
 				myStmt.setInt(3, theContact.getID());
 				myStmt.executeUpdate();
+				}
+				
 			}
 			else
 			{
@@ -378,6 +405,16 @@ public class ContactDAO {
 			}
 			if(check==1)
 			{
+				if(theContact.getWorkStreet().equals("") && theContact.getWorkCity().equals("") &&
+						theContact.getWorkState().equals("")&& theContact.getWorkZIP().equals(""))
+				{
+					
+					myStmt = myConn.prepareStatement("delete from address where  contac_id=? and address_type='work'");
+					myStmt.setInt(1, theContact.getID());
+					myStmt.executeUpdate();
+					}
+				else
+				{
 				myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type='work'");
 				myStmt.setString(1, theContact.getWorkStreet());
 				myStmt.setString(2, theContact.getWorkCity());
@@ -385,6 +422,7 @@ public class ContactDAO {
 				myStmt.setString(4, theContact.getWorkZIP());
 				myStmt.setInt(5, theContact.getID());
 				myStmt.executeUpdate();
+				}
 			}
 			else
 			{
@@ -412,6 +450,16 @@ public class ContactDAO {
 			}
 			if(check==1)
 			{
+				if(theContact.getHomeStreet().equals("") && theContact.getHomeCity().equals("") &&
+						theContact.getHomeState().equals("") && theContact.getHomeZIP().equals(""))
+				{
+					
+					myStmt = myConn.prepareStatement("delete from address where  contac_id=? and address_type='home'");
+					myStmt.setInt(1, theContact.getID());
+					myStmt.executeUpdate();
+					}
+				else
+				{
 				myStmt = myConn.prepareStatement("update address set address_street=?,city=?,state=?,zipcode=? where contac_id=? and address_type='home'");
 				myStmt.setString(1, theContact.getHomeStreet());
 				myStmt.setString(2, theContact.getHomeCity());
@@ -419,6 +467,7 @@ public class ContactDAO {
 				myStmt.setString(4, theContact.getHomeZIP());
 				myStmt.setInt(5, theContact.getID());
 				myStmt.executeUpdate();
+				}
 			}
 			else
 			{ 
