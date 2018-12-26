@@ -67,7 +67,7 @@ public class ContactManagerApp extends JFrame {
 		}
 		setTitle("Contact Search App");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 529, 309);
+		setBounds(100, 100, 573, 417);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -117,6 +117,34 @@ public class ContactManagerApp extends JFrame {
 		});
 		panel.add(btnSearch);
 		
+		JButton btnViewContact = new JButton("View Contact");
+		btnViewContact.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					int row = table.getSelectedRow();
+				
+				// make sure a row is selected
+				if (row < 0) {
+					JOptionPane.showMessageDialog(ContactManagerApp.this, "You must select a contact", "Error",
+							JOptionPane.ERROR_MESSAGE);				
+					return;
+				}
+				
+				ContactForm temp = (ContactForm) table.getValueAt(row, ContactTableModel.OBJECT_COL);
+				AddContact dialog = new AddContact(ContactManagerApp.this, contactDAO, temp,false,true);
+				dialog.setVisible(true);
+				}
+				catch(Exception exc)
+				{
+					JOptionPane.showMessageDialog(ContactManagerApp.this, "Error "+exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+		});
+		btnViewContact.setHorizontalAlignment(SwingConstants.RIGHT);
+		panel.add(btnViewContact);
+		
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
@@ -127,6 +155,7 @@ public class ContactManagerApp extends JFrame {
 		contentPane.add(panel_1, BorderLayout.SOUTH);
 		
 		JButton btnAddContact = new JButton("Add New Contact");
+		btnAddContact.setHorizontalAlignment(SwingConstants.LEFT);
 		panel_1.add(btnAddContact);
 		
 		JButton btnUpdateContact = new JButton("Update Contact");
@@ -145,7 +174,7 @@ public class ContactManagerApp extends JFrame {
 				}
 				
 				ContactForm temp = (ContactForm) table.getValueAt(row, ContactTableModel.OBJECT_COL);
-				AddContact dialog = new AddContact(ContactManagerApp.this, contactDAO, temp,true);
+				AddContact dialog = new AddContact(ContactManagerApp.this, contactDAO, temp,true,false);
 				dialog.setVisible(true);
 				}
 				catch(Exception exc)
@@ -158,6 +187,7 @@ public class ContactManagerApp extends JFrame {
 		panel_1.add(btnUpdateContact);
 		
 		JButton btnDeleteRow = new JButton("Delete Contact");
+		btnDeleteRow.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel_1.add(btnDeleteRow);
 		btnDeleteRow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -165,7 +195,7 @@ public class ContactManagerApp extends JFrame {
 				{
 					int row = table.getSelectedRow();
 				
-				// make sure a row is selected
+				// Make sure a row is selected
 				if (row < 0) {
 					JOptionPane.showMessageDialog(ContactManagerApp.this, "You must select a contact", "Error",
 							JOptionPane.ERROR_MESSAGE);				

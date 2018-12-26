@@ -16,8 +16,6 @@ public class ContactDAO {
 		String user="root";
 		String password="SIDdharth_85";
 		String dburl="jdbc:mysql://localhost:3306/contact_list?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-
-
 		 myConn = DriverManager.getConnection(dburl,user,password);
 	System.out.println("Database connected successfully");
 	}
@@ -394,6 +392,7 @@ public class ContactDAO {
 				myStmt.setString(2, theContact.getWorkAreaCode());
 				myStmt.setString(3, theContact.getWorkPhone());
 				myStmt.executeUpdate();
+				
 			}
 			}
 		

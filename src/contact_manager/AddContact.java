@@ -44,6 +44,7 @@ public class AddContact extends JDialog {
 	
 	private ContactForm prevContact=null;
 	private boolean updateMode=false;
+	private boolean viewMode=false;
 	private JTextField hstreettextField;
 	private JLabel lblWorkStreetCity;
 	private JLabel lblStateZip_1;
@@ -60,15 +61,23 @@ public class AddContact extends JDialog {
 	
 	
 	
-	public AddContact(ContactManagerApp theContactManagerApp,ContactDAO theContactDAO,ContactForm theContact,boolean theUpdateMode) throws Exception
+	public AddContact(ContactManagerApp theContactManagerApp,ContactDAO theContactDAO,ContactForm theContact,boolean theUpdateMode,boolean theViewMode) throws Exception
 	{
 		this();
 		contactDAO = theContactDAO;
 		contactManagerApp = theContactManagerApp;
 		prevContact=theContact;
 		updateMode=theUpdateMode;
+		viewMode=theViewMode;
 		if(updateMode) {
-			setTitle("Modify Employee");
+			setTitle("Modify Contact");
+			int id=prevContact.getID();
+			ContactForm temp= theContactDAO.getSpecificContact(id);
+			populateGui(temp);
+			
+		}
+		if(viewMode) {
+			setTitle("View Contact");
 			int id=prevContact.getID();
 			ContactForm temp= theContactDAO.getSpecificContact(id);
 			populateGui(temp);
@@ -512,6 +521,11 @@ public class AddContact extends JDialog {
 				contactManagerApp.RefreshEmployeesView();
 				JOptionPane.showMessageDialog(contactManagerApp,"Contact modified succesfully!","Contact Modified",JOptionPane.INFORMATION_MESSAGE);
 			}
+		else if(viewMode)
+		{
+			setVisible(false);
+			dispose();
+		}
 			else
 			{
 				
