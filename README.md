@@ -1,5 +1,6 @@
-# ContactManager
+# Contact-Manager
 A Java based GUI application that manages a list of contacts by interacting with an SQL database. Contact details may include name, addresses(multiple), phone numbers(multiple) and birthday. User operations include:  
+
 1. Searching for a contact based on any field  
 2. Adding a new contact  
 3. Modifying existing contacts  
@@ -16,8 +17,12 @@ Java Build -> PathLibraries -> ClassPath
 
 If the file mysql-connector-java-8.0.12.jar is  already added in the ClassPath, select cancel. Else click Add JARs  Select mysql-connector-java-8.0.12.jar  which is located in folder ‘lib’ of the contact_manager project  Apply and Close
 
-In case the mysql-connector-java-8.0.12.jar is not in the ‘lib’ folder, I included it in my zip file.
+In case the mysql-connector-java-8.0.12.jar is not in the ‘lib’ folder, I have included it in my zip file.
 
-4. Open on ContactManagerApp class. Right-click -> Run as  Java Application
+4. Open the file 'ContactManagerApp.java'. Right-click -> Run as Java Application
 
-5. The application can be used now
+5. Open MySql Workbench. Run the 'createSchema.sql' file to create the tables. 
+
+6.Run 'PopulateDatabase.java' to load a list of sample contacts in your application to get started (optional).
+
+7. The application can be used now. Enjoy!
