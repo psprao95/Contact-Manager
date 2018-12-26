@@ -21,8 +21,8 @@ In case the mysql-connector-java-8.0.12.jar is not in the ‘lib’ folder, I ha
 
 4. Open the file 'ContactManagerApp.java'. Right-click -> Run as Java Application
 
-5. Open MySql Workbench. Run the 'createSchema.sql' file to create the tables. 
+5. Open MySql Workbench. Run the 'createSchema.sql' file to create the tables
 
-6.Run 'PopulateDatabase.java' to load a list of sample contacts in your application to get started (optional).
+6. Run 'PopulateDatabase.java' to load a list of sample contacts in your application to get started (optional).
 
 7. The application can be used now. Enjoy!
