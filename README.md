@@ -1,5 +1,5 @@
 ## Contact-Manager
-A Java based GUI application that manages a list of contacts by interacting with an SQL database. Contact details may include name, addresses(multiple), phone numbers(multiple) and birthday. User operations include:  
+A Java based GUI application that manages a list of contacts by interacting with an SQL database. Contact details may include name, multiple addresses, multiple phone numbers and birthday. User operations include:  
 
 1. Searching for a contact based on any field  
 2. Adding a new contact  
@@ -9,7 +9,7 @@ A Java based GUI application that manages a list of contacts by interacting with
 ## Running the Application
 1. Open Eclipse. 
 
-2. Select File -> Open Projects from file system -> Directory -> Choose ‘contact_manager’ folder -> Finish
+2. Select File -> Open Projects from file system -> Directory -> Choose the *contact_manager* folder -> Finish
 
 3. In the Package Explorer tab on the left hand side, right click on contact_manager -> Java Build -> PathLibraries -> ClassPath
 
@@ -17,7 +17,7 @@ If the file mysql-connector-java-8.0.12.jar is  already added in the ClassPath, 
 
 4. Right click on the file *ContactManagerApp.java* -> Run as Java Application
 
-5. Open MySQL Workbench. Run the 'createSchema.sql' file to create the required tables
+5. Open MySQL Workbench. Run the *createSchema.sql* file to create the required tables
 
 6. Run *PopulateDatabase.java* to load a list of sample contacts in your application to get started (optional). This code loads the entries from the *contacts.csv* file.
 
@@ -54,8 +54,8 @@ If the file mysql-connector-java-8.0.12.jar is  already added in the ClassPath, 
     * *ContactForm.java*, which creates an object that represents a contact every time we require to pass to and from the SQL              database via the methods in ContactDAO
     *. *ContactTableModel.java*, which is a class responsible for displaying all contacts/ contacts which are searched for in the            JTable of the JFrame object
     * *ContactManagerApp.java*, which creates a JFrame object and starts the application
-    * *AddContact.java, which creates a JDialog object for adding a contact to the database
+    * *AddContact.java*, which creates a JDialog object for adding a contact to the database
     
 * The ContactDAO class contains methods such as searchForContact(contact), getAllContacts(), modifyContact(contact) and addContact(contact) which interface with the SQL database.
 
-* The application can be accessed by running the ContactManagerApp.java class.
+* The application can be accessed by running the *ContactManagerApp.java* class.
